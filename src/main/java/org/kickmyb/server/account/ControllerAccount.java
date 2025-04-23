@@ -66,8 +66,8 @@ public class ControllerAccount {
     public @ResponseBody SigninResponse signup(@RequestBody SignupRequest s) throws ServiceAccount.UsernameTooShort, ServiceAccount.PasswordTooShort, ServiceAccount.UsernameAlreadyTaken, BadCredentialsException {
         System.out.println("ID : SIGNUP request " + s);
         ConfigHTTP.attenteArticifielle();
-        String lang = request.getHeader("Accept-Language");
-    userService.signup(s, lang);
+        
+    userService.signup(s);
         userService.signup(s);
         SigninRequest req = new SigninRequest();
         req.username = s.username;
@@ -88,28 +88,7 @@ public class ControllerAccount {
         securityContextRepository.saveContext(context, request, response);
         return "";
     }
-// Gestion des erreurs d'inscription
 
-@org.springframework.web.bind.annotation.ExceptionHandler(ServiceAccount.UsernameTooShort.class)
-@org.springframework.web.bind.annotation.ResponseStatus(org.springframework.http.HttpStatus.BAD_REQUEST)
-@org.springframework.web.bind.annotation.ResponseBody
-public String handleUsernameTooShort(ServiceAccount.UsernameTooShort ex) {
-    return ex.getMessage();
-}
-
-@org.springframework.web.bind.annotation.ExceptionHandler(ServiceAccount.PasswordTooShort.class)
-@org.springframework.web.bind.annotation.ResponseStatus(org.springframework.http.HttpStatus.BAD_REQUEST)
-@org.springframework.web.bind.annotation.ResponseBody
-public String handlePasswordTooShort(ServiceAccount.PasswordTooShort ex) {
-    return ex.getMessage();
-}
-
-@org.springframework.web.bind.annotation.ExceptionHandler(ServiceAccount.UsernameAlreadyTaken.class)
-@org.springframework.web.bind.annotation.ResponseStatus(org.springframework.http.HttpStatus.CONFLICT)
-@org.springframework.web.bind.annotation.ResponseBody
-public String handleUsernameAlreadyTaken(ServiceAccount.UsernameAlreadyTaken ex) {
-    return ex.getMessage();
-}
 
 
     
