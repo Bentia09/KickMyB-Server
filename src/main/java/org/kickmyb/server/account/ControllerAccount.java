@@ -66,6 +66,8 @@ public class ControllerAccount {
     public @ResponseBody SigninResponse signup(@RequestBody SignupRequest s) throws ServiceAccount.UsernameTooShort, ServiceAccount.PasswordTooShort, ServiceAccount.UsernameAlreadyTaken, BadCredentialsException {
         System.out.println("ID : SIGNUP request " + s);
         ConfigHTTP.attenteArticifielle();
+        String lang = request.getHeader("Accept-Language");
+    userService.signup(s, lang);
         userService.signup(s);
         SigninRequest req = new SigninRequest();
         req.username = s.username;
