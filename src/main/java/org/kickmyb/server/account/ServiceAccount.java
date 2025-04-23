@@ -30,6 +30,6 @@ public interface ServiceAccount extends UserDetailsService {
     }
 }
 
-    void signup(SignupRequest req) throws BadCredentialsException, UsernameTooShort, PasswordTooShort, UsernameAlreadyTaken;
+ void signup(SignupRequest req, String lang) throws BadCredentialsException, UsernameTooShort, PasswordTooShort, UsernameAlreadyTaken;
 
 }
