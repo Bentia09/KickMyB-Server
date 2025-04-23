@@ -6,22 +6,30 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 // extends UserDetailsService which is one of the Spring Security entry points
 public interface ServiceAccount extends UserDetailsService {
 
-    class UsernameTooShort extends Exception {
- public UsernameTooShort() {
-            super("Le nom d'utilisateur est trop court.");
-        }
-        
+  public class UsernameTooShort extends Exception {
+    public UsernameTooShort(String lang) {
+        super(lang != null && lang.startsWith("en")
+            ? "Username is too short."
+            : "Le nom d'utilisateur est trop court.");
     }
-    class UsernameAlreadyTaken extends Exception {
-          public UsernameAlreadyTaken() {
-            super("Ce nom d'utilisateur est déjà pris.");
-        }
+}
+
+  public class UsernameAlreadyTaken extends Exception {
+    public UsernameAlreadyTaken(String lang) {
+        super(lang != null && lang.startsWith("en")
+            ? "This username is already taken."
+            : "Ce nom d'utilisateur est déjà pris.");
     }
-    class PasswordTooShort extends Exception {
-        public PasswordTooShort() {
-            super("Le mot de passe est trop court.");
-        }
+}
+
+   public class PasswordTooShort extends Exception {
+    public PasswordTooShort(String lang) {
+        super(lang != null && lang.startsWith("en")
+            ? "Password is too short."
+            : "Le mot de passe est trop court.");
     }
+}
+
     void signup(SignupRequest req) throws BadCredentialsException, UsernameTooShort, PasswordTooShort, UsernameAlreadyTaken;
 
 }
