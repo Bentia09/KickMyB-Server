@@ -86,4 +86,29 @@ public class ControllerAccount {
         securityContextRepository.saveContext(context, request, response);
         return "";
     }
+// Gestion des erreurs d'inscription
+
+@org.springframework.web.bind.annotation.ExceptionHandler(ServiceAccount.UsernameTooShort.class)
+@org.springframework.web.bind.annotation.ResponseStatus(org.springframework.http.HttpStatus.BAD_REQUEST)
+@org.springframework.web.bind.annotation.ResponseBody
+public String handleUsernameTooShort(ServiceAccount.UsernameTooShort ex) {
+    return ex.getMessage();
+}
+
+@org.springframework.web.bind.annotation.ExceptionHandler(ServiceAccount.PasswordTooShort.class)
+@org.springframework.web.bind.annotation.ResponseStatus(org.springframework.http.HttpStatus.BAD_REQUEST)
+@org.springframework.web.bind.annotation.ResponseBody
+public String handlePasswordTooShort(ServiceAccount.PasswordTooShort ex) {
+    return ex.getMessage();
+}
+
+@org.springframework.web.bind.annotation.ExceptionHandler(ServiceAccount.UsernameAlreadyTaken.class)
+@org.springframework.web.bind.annotation.ResponseStatus(org.springframework.http.HttpStatus.CONFLICT)
+@org.springframework.web.bind.annotation.ResponseBody
+public String handleUsernameAlreadyTaken(ServiceAccount.UsernameAlreadyTaken ex) {
+    return ex.getMessage();
+}
+
+
+    
 }
