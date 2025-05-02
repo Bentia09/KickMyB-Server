@@ -116,26 +116,25 @@ class ServiceTaskTests {
 
 
 @Test 
-    void supressionIdCorrect() throws Exception{
-    MUser u= new MUser();
-    u.username= "M. Test";
+void supressionIdCorrect() throws Exception {
+    MUser u = new MUser();
+    u.username = "M. Test";
     u.password = passwordEncoder.encode("Passw0rd!");
     userRepository.saveAndFlush(u);
-    AddTaskRequest art= new AddTaskRequest(); 
- art.name = "Manger";
- art.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
 
+    AddTaskRequest art = new AddTaskRequest(); 
+    art.name = "Manger";
+    art.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
+    serviceTask.addOne(art, u);
 
-     serviceTask.addOne(art,u);
-     Muser user= userRposotory.findByUesername("M.test).get();
-    Long taskId= user.task.get(0).id;
-    
-assertEquals(1, serviceTask.home(utilisateurMisAJour.id).size());
-serviceTask.deleteTask(taskId, utilisateurMisAJour);
- assertEquals(0, serviceTask.home(utilisateurMisAJour.id).size());        
-        
-        
-    }
+    MUser user = userRepository.findByUsername("M. Test").get();
+    Long taskId = user.tasks.get(0).id;
+
+    assertEquals(1, serviceTask.home(user.id).size());
+    serviceTask.deleteTask(taskId, user);
+    assertEquals(0, serviceTask.home(user.id).size());
+}
+
 @Test
 void supressionIdIncorrect() {
     
