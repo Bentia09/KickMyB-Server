@@ -56,6 +56,10 @@ public class ControllerTask {
         MUser user = currentUser();
         return serviceTask.detail(id, user);
     }
+@DeleteMapping("/api/task/{id}")
+public void deleteTask(@PathVariable Long id, @AuthenticationPrincipal MUser user) {
+    serviceTask.deleteTask(id, user);
+}
 
     /**
      * Accède au Principal stocké dans la mémoire vivre (HttpSession)
@@ -69,4 +73,8 @@ public class ControllerTask {
         UserDetails ud = (UserDetails) authentication.getPrincipal();
         return serviceTask.userFromUsername(ud.getUsername());
     }
+
+
+
+
 }
