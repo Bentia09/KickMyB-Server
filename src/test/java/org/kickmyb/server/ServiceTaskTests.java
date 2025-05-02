@@ -14,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
+import java.util.NoSuchElementException;
+
 
 import java.util.Date;
 
@@ -119,7 +121,7 @@ class ServiceTaskTests {
 void supressionIdCorrect() throws Exception {
     MUser u = new MUser();
     u.username = "M. Test";
-    u.password = passwordEncoder.encode("Passw0rd!");
+  u.password = passwordEncoder.encode("Passw0rd!"); 
     userRepository.saveAndFlush(u);
 
     AddTaskRequest art = new AddTaskRequest(); 
@@ -127,8 +129,9 @@ void supressionIdCorrect() throws Exception {
     art.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
     serviceTask.addOne(art, u);
 
-    MUser user = userRepository.findByUsername("M. Test").get();
-    Long taskId = user.tasks.get(0).id;
+   MUser user = userRepository.findByUsername("M. Test").get(); 
+Long taskId = user.tasks.get(0).id; 
+
 
     assertEquals(1, serviceTask.home(user.id).size());
     serviceTask.deleteTask(taskId, user);
@@ -147,7 +150,8 @@ void supressionIdIncorrect() {
 
     try {
         serviceTask.deleteTask(idInexistant, u);
-        fail("La suppression à échouer pour un ID inexistant");
+       fail("La suppression aurait dû échouer pour un ID inexistant"); // ✅
+
     } catch (Exception e) {
         
         assertEquals(NoSuchElementException.class, e.getClass());
