@@ -112,4 +112,37 @@ class ServiceTaskTests {
             assertEquals(ServiceTask.Existing.class, e.getClass());
         }
     }
+
+
+
+@Test 
+    void supression() throws Exception{
+    MUser u= new MUser();
+    u.username= "M. Test";
+    u.password = passwordEncoder.encode("Passw0rd!");
+    userRepository.saveAndFlush(u);
+    AddTaskRequest art= new AddTaskRequest(); 
+ art.name = "Manger";
+ art.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
+
+
+     serviceTask.addOne(art,u);
+     Muser user= userRposotory.findByUesername("M.test).get();
+    Long taskId= user.task.get(0).id;
+    
+assertEquals(1, serviceTask.home(utilisateurMisAJour.id).size());
+serviceTask.deleteTask(taskId, utilisateurMisAJour);
+ assertEquals(0, serviceTask.home(utilisateurMisAJour.id).size());        
+        
+
+          
+    
+
+
+        
+    }
+ 
+
+
+    
 }
