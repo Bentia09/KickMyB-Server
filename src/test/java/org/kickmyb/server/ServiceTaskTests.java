@@ -116,6 +116,33 @@ class ServiceTaskTests {
     }
 
 
+@Test 
+void supressionIdCorrect()  throws ServiceTask.Empty, ServiceTask.TooShort, ServiceTask.Existing {
+    MUser u = new MUser();
+    u.username = "M. Test";
+  u.password = passwordEncoder.encode("Passw0rd!"); 
+    userRepository.saveAndFlush(u);
+
+    AddTaskRequest art = new AddTaskRequest(); 
+    art.name = "Manger";
+    art.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
+    serviceTask.addOne(art, u);
+MUser refreshedUser = userRepository.findByUsername("M. Test").orElseThrow();
+
+
+    List<HomeItemResponse> taches = serviceTask.home(refreshedUser.getId());
+    assertEquals(1, taches.size());
+    Long idTache = taches.get(0).id;
+
+    serviceTask.deleteTask(idTache, refreshedUser);
+
+    
+    List<HomeItemResponse> tachesApres = serviceTask.home(refreshedUser.getId());
+    assertTrue(tachesApres.isEmpty());
+}
+ 
+
+
 
 
 
