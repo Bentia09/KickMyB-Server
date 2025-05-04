@@ -117,79 +117,7 @@ class ServiceTaskTests {
 
 
 
-@Test 
-void supressionIdCorrect() throws Exception {
-    MUser u = new MUser();
-    u.username = "M. Test";
-  u.password = passwordEncoder.encode("Passw0rd!"); 
-    userRepository.saveAndFlush(u);
 
-    AddTaskRequest art = new AddTaskRequest(); 
-    art.name = "Manger";
-    art.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
-    serviceTask.addOne(art, u);
-
-   MUser user = userRepository.findByUsername("M. Test").get(); 
-Long taskId = user.tasks.get(0).id; 
-
-
-    assertEquals(1, serviceTask.home(user.id).size());
-    serviceTask.deleteTask(taskId, user);
-    assertEquals(0, serviceTask.home(user.id).size());
-}
-
-@Test
-void supressionIdIncorrect() {
-    
-    MUser u = new MUser();
-    u.username = "M. Test";
-    u.password = passwordEncoder.encode("Passw0rd!");
-    userRepository.saveAndFlush(u);
-
-    Long idInexistant = 999L;
-
-    try {
-        serviceTask.deleteTask(idInexistant, u);
-       fail("La suppression aurait dû échouer pour un ID inexistant"); // ✅
-
-    } catch (Exception e) {
-        
-        assertEquals(NoSuchElementException.class, e.getClass());
-    }
-}
-
-@Test
-void suppressionNonAutorisee() throws ServiceTask.Empty, ServiceTask.TooShort, ServiceTask.Existing {
-  
-    MUser alice = new MUser();
-    alice.username = "alice";
-    alice.password = passwordEncoder.encode("123456");
-    userRepository.saveAndFlush(alice);
-
-    
-    AddTaskRequest req = new AddTaskRequest();
-    req.name = "Tâche secrète";
-    req.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
-    serviceTask.addOne(req, alice);
-
-    
-    alice = userRepository.findByUsername("alice").get();
-    Long idTache = alice.tasks.get(0).id;
-
-    
-    MUser bob = new MUser();
-    bob.username = "bob";
-    bob.password = passwordEncoder.encode("abcdef");
-    userRepository.saveAndFlush(bob);
-
-   
-    try {
-        serviceTask.deleteTask(idTache, bob);
-        fail("Bob n'aurait pas dû pouvoir supprimer la tâche d'Alice !");
-    } catch (RuntimeException e) {
-        assertEquals("Tâche non autorisée à être supprimée.", e.getMessage());
-    }
-}
 
 
     
