@@ -58,7 +58,7 @@ class ServiceTaskTests {
     }
 
     @Test
-    void testAddTaskEmpty()  {
+    void testAddTaskEmpty() {
         MUser u = new MUser();
         u.username = "M. Test";
         u.password = passwordEncoder.encode("Passw0rd!");
@@ -68,7 +68,7 @@ class ServiceTaskTests {
         atr.name = "";
         atr.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
 
-        try{
+        try {
             serviceTask.addOne(atr, u);
             fail("Aurait du lancer ServiceTask.Empty");
         } catch (Exception e) {
@@ -87,7 +87,7 @@ class ServiceTaskTests {
         atr.name = "o";
         atr.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
 
-        try{
+        try {
             serviceTask.addOne(atr, u);
             fail("Aurait du lancer ServiceTask.TooShort");
         } catch (Exception e) {
@@ -106,7 +106,7 @@ class ServiceTaskTests {
         atr.name = "Bonne tâche";
         atr.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
 
-        try{
+        try {
             serviceTask.addOne(atr, u);
             serviceTask.addOne(atr, u);
             fail("Aurait du lancer ServiceTask.Existing");
@@ -145,7 +145,6 @@ class ServiceTaskTests {
     }
 
 
-
     @Test
     void testSuppressionAvecIDInexistant() {
 
@@ -164,7 +163,36 @@ class ServiceTaskTests {
     }
 
 
+    @Test
+    void testControleAccesEchecSuppression() throws Exception {
 
+        MUser alice = new MUser();
+        alice.username = "Alice";
+        alice.password = passwordEncoder.encode("passAlice");
+        userRepository.saveAndFlush(alice);
+
+
+        AddTaskRequest req = new AddTaskRequest();
+        req.name = "Tâche d'Alice";
+        req.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
+        serviceTask.addOne(req, alice);
+
+        MUser reloadedAlice = userRepository.findById(alice.id).orElseThrow();
+        Long taskId = serviceTask.home(reloadedAlice.id).get(0).id;
+
+        MUser bob = new MUser();
+        bob.username = "Bob";
+        bob.password = passwordEncoder.encode("passBob");
+        userRepository.saveAndFlush(bob);
+
+
+        try {
+            serviceTask.deleteTask(taskId, bob);
+            fail("Aurait dû lancer SecurityException");
+        } catch (SecurityException e) {
+
+        }
+    }
 
 
     
