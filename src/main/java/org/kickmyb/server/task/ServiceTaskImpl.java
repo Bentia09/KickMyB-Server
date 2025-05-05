@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Component
 @Transactional
@@ -20,6 +21,11 @@ public class ServiceTaskImpl implements ServiceTask {
     MUserRepository repoUser;
     @Autowired MTaskRepository repo;
     @Autowired MProgressEventRepository repoProgressEvent;
+    @Autowired
+    private MTaskRepository taskRepository;
+
+    @Autowired
+    private MUserRepository userRepository;
 
     private int percentage(Date start, Date current, Date end){
         if (current.after(end)) return 100;
@@ -179,19 +185,25 @@ public class ServiceTaskImpl implements ServiceTask {
 
         return response;
     }
-@Override
-public void deleteTask(Long taskId, MUser user) {
-    MTask task = repo.findById(taskId).orElseThrow();
-    
-   
-    if (!user.tasks.contains(task)) {
-        throw new RuntimeException("Tâche non autorisée à être supprimée.");
+    @Override
+    public void deleteTask(Long taskId, MUser user) {
+
+        MUser userWithTasks = userRepository.findById(user.id).orElseThrow();
+
+
+        MTask taskToDelete = taskRepository.findById(taskId).orElseThrow(() -> new NoSuchElementException("Task not found"));
+
+
+        if (!userWithTasks.tasks.contains(taskToDelete)) {
+            throw new SecurityException("Unauthorized to delete this task");
+        }
+
+
+        userWithTasks.tasks.remove(taskToDelete);
+        userRepository.save(userWithTasks);
+
+
+        taskRepository.delete(taskToDelete);
     }
-
-    user.tasks.remove(task);      
-    repoUser.save(user);          
-
-    repo.delete(task);            
-}
 
 }
