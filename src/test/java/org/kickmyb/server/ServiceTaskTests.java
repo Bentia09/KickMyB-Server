@@ -116,6 +116,33 @@ class ServiceTaskTests {
     }
 
 
+    @Test
+    void testSuppressionAvecIDCorrect() throws Exception {
+
+        MUser user = new MUser();
+        user.username = "Utilisateur1";
+        user.password = passwordEncoder.encode("motdepasse");
+        userRepository.saveAndFlush(user);
+
+
+        AddTaskRequest req = new AddTaskRequest();
+        req.name = "Tâche à supprimer";
+        req.deadline = Date.from(new Date().toInstant().plusSeconds(3600));
+        serviceTask.addOne(req, user);
+
+
+        MUser reloadedUser = userRepository.findById(user.id).orElseThrow();
+
+
+        assertEquals(1, serviceTask.home(reloadedUser.id).size());
+        Long taskId = serviceTask.home(reloadedUser.id).get(0).id;
+
+
+        serviceTask.deleteTask(taskId, reloadedUser);
+
+
+        assertEquals(0, serviceTask.home(reloadedUser.id).size());
+    }
 
  
 
