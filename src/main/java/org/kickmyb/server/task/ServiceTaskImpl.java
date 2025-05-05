@@ -182,12 +182,16 @@ public class ServiceTaskImpl implements ServiceTask {
 @Override
 public void deleteTask(Long taskId, MUser user) {
     MTask task = repo.findById(taskId).orElseThrow();
-
-    if (!task.user.id.equals(user.id)) {
+    
+   
+    if (!user.tasks.contains(task)) {
         throw new RuntimeException("Tâche non autorisée à être supprimée.");
     }
 
-    repo.delete(task);
+    user.tasks.remove(task);      
+    repoUser.save(user);          
+
+    repo.delete(task);            
 }
 
 }
