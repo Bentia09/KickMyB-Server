@@ -144,8 +144,24 @@ class ServiceTaskTests {
         assertEquals(0, serviceTask.home(reloadedUser.id).size());
     }
 
- 
 
+
+    @Test
+    void testSuppressionAvecIDInexistant() {
+
+        MUser user = new MUser();
+        user.username = "Utilisateur2";
+        user.password = passwordEncoder.encode("motdepasse");
+        userRepository.saveAndFlush(user);
+
+
+        try {
+            serviceTask.deleteTask(9999L, user);
+            fail("Aurait dû lancer NoSuchElementException");
+        } catch (NoSuchElementException e) {
+
+        }
+    }
 
 
 
