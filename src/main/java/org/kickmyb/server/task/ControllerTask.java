@@ -6,6 +6,8 @@ import org.kickmyb.transfer.AddTaskRequest;
 import org.kickmyb.transfer.HomeItemResponse;
 import org.kickmyb.transfer.TaskDetailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 // TODO move to @AuthenticationPrincipal user
 
@@ -57,10 +60,16 @@ public class ControllerTask {
         MUser user = currentUser();
         return serviceTask.detail(id, user);
     }
-@DeleteMapping("/api/task/{id}")
-public void deleteTask(@PathVariable Long id, @AuthenticationPrincipal MUser user) {
-    serviceTask.deleteTask(id, user);
-}
+    @DeleteMapping("/api/task/{id}")
+    public @ResponseBody void deleteTask(@PathVariable long id) {
+        System.out.println("KICKB SERVER : Delete task " + id + " with cookie");
+        ConfigHTTP.attenteArticifielle();
+
+        MUser user = currentUser();
+        serviceTask.deleteTask(id, user);
+    }
+
+
 
     /**
      * Accède au Principal stocké dans la mémoire vivre (HttpSession)
