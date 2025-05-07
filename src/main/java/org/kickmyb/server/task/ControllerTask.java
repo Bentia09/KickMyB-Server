@@ -64,7 +64,6 @@ public class ControllerTask {
     public @ResponseBody void deleteTask(@PathVariable long id) {
         System.out.println("KICKB SERVER : Delete task " + id + " with cookie");
         ConfigHTTP.attenteArticifielle();
-
         MUser user = currentUser();
         serviceTask.deleteTask(id, user);
     }
