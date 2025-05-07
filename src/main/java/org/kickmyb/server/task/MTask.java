@@ -30,5 +30,7 @@ public class MTask {
     @OneToOne
     public MPhoto photo;
 
+    @ManyToOne
+    public MUser owner;
 
 }

@@ -73,6 +73,7 @@ public class ServiceTaskImpl implements ServiceTask {
         // tout est beau, on crée
         MTask t = new MTask();
         t.name = req.name;
+        t.owner = user;
         t.creationDate = DateTime.now().toDate();
         if (req.deadline == null) {
             t.deadline = DateTime.now().plusDays(7).toDate();
@@ -187,20 +188,12 @@ public class ServiceTaskImpl implements ServiceTask {
     }
     @Override
     public void deleteTask(Long taskId, MUser user) {
-
-        MTask taskToDelete = taskRepository.findById(taskId).orElseThrow(() -> new NoSuchElementException("Task not found"));
-
-
-        if (!user.tasks.contains(taskToDelete)) {
+        MTask task = taskRepository.findById(taskId).orElseThrow();
+        if (!task.owner.id.equals(user.id)) {
             throw new SecurityException("Unauthorized to delete this task");
         }
 
-
-        user.tasks.remove(taskToDelete);
-        userRepository.save(user);
-
-
-        taskRepository.delete(taskToDelete);
+        taskRepository.delete(task);
     }
 
 }
