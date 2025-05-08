@@ -5,8 +5,10 @@ import org.kickmyb.server.account.MUser;
 import org.kickmyb.server.account.MUserRepository;
 import org.kickmyb.transfer.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -188,19 +190,23 @@ public class ServiceTaskImpl implements ServiceTask {
     }
     @Override
     public void deleteTask(Long taskId, MUser user) {
-        MTask task = taskRepository.findById(taskId).orElseThrow();
+        System.out.println("Tentative de suppression de la tâche ID " + taskId + " par l'utilisateur " + user.username);
+
+        MTask task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tâche non trouvée"));
+
+        System.out.println("Tâche trouvée, propriétaire : " + (task.owner != null ? task.owner.username : "null"));
 
         if (task.owner == null || !task.owner.id.equals(user.id)) {
-            throw new SecurityException("Unauthorized to delete this task");
+            System.out.println("⚠️ Refus : tâche ne t'appartient pas");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Non autorisé à supprimer cette tâche");
         }
 
-
         user.tasks.removeIf(t -> t.id.equals(task.id));
-        userRepository.save(user); // très important
-
+        userRepository.save(user);
 
         taskRepository.delete(task);
+        System.out.println("✅ Tâche supprimée !");
     }
-
 
 }
