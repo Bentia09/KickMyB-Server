@@ -189,11 +189,18 @@ public class ServiceTaskImpl implements ServiceTask {
     @Override
     public void deleteTask(Long taskId, MUser user) {
         MTask task = taskRepository.findById(taskId).orElseThrow();
-        if (!task.owner.id.equals(user.id)) {
+
+        if (task.owner == null || !task.owner.id.equals(user.id)) {
             throw new SecurityException("Unauthorized to delete this task");
         }
 
+
+        user.tasks.removeIf(t -> t.id.equals(task.id));
+        userRepository.save(user); // très important
+
+
         taskRepository.delete(task);
     }
+
 
 }
