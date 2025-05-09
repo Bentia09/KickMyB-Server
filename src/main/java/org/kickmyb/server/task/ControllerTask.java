@@ -38,10 +38,10 @@ public class ControllerTask {
     }
 
     @GetMapping(value = "/api/progress/{taskID}/{value}", produces = "text/plain")
-    public @ResponseBody String updateProgress(@PathVariable long taskID, @PathVariable int value) {
+    public @ResponseBody String updateProgress(@PathVariable long taskID, @PathVariable int value, @AuthenticationPrincipal MUser user) {
         System.out.println("KICKB SERVER : Progress for task : " + taskID + " @" + value);
         ConfigHTTP.attenteArticifielle();
-        serviceTask.updateProgress(taskID, value);
+        serviceTask.updateProgress(taskID, value, user);
         return "";
     }
 
