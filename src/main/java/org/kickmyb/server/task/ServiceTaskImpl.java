@@ -90,8 +90,8 @@ public class ServiceTaskImpl implements ServiceTask {
         MTask element = repo.findById(taskID)
                 .orElseThrow(() -> new NoSuchElementException("Task not found"));
 
-        // 🔐 Vérification : l'utilisateur doit être le propriétaire
-        if (!element.owner.id.equals(user.id)) {
+
+        if (user == null || element.owner == null || !element.owner.id.equals(user.id)) {
             throw new SecurityException("Unauthorized to update this task");
         }
 
