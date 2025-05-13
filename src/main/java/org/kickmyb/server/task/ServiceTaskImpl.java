@@ -5,8 +5,10 @@ import org.kickmyb.server.account.MUser;
 import org.kickmyb.server.account.MUserRepository;
 import org.kickmyb.transfer.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,7 +94,7 @@ public class ServiceTaskImpl implements ServiceTask {
 
 
         if (user == null || element.owner == null || !element.owner.id.equals(user.id)) {
-            throw new SecurityException("Unauthorized to update this task");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized to update this task");
         }
 
         MProgressEvent pe = new MProgressEvent();
