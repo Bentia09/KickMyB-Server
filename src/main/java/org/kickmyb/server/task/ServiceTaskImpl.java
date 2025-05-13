@@ -89,8 +89,16 @@ public class ServiceTaskImpl implements ServiceTask {
 
     @Override
     public void updateProgress(long taskID, int value, MUser user) {
-        MTask element = repo.findById(taskID).get();
-        if ( !element.owner.id.equals(user.id)) {
+        
+        if (value < 0 || value > 100) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Percentage must be between 0 and 100");
+        }
+
+        MTask element = repo.findById(taskID)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
+
+
+        if (element.owner == null || user == null || !element.owner.id.equals(user.id)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized to update this task");
         }
 
@@ -103,6 +111,7 @@ public class ServiceTaskImpl implements ServiceTask {
         element.events.add(pe);
         repo.save(element);
     }
+
 
     @Override
     public List<HomeItemResponse> home(Long userID) {
