@@ -89,11 +89,8 @@ public class ServiceTaskImpl implements ServiceTask {
 
     @Override
     public void updateProgress(long taskID, int value, MUser user) {
-        MTask element = repo.findById(taskID)
-                .orElseThrow(() -> new NoSuchElementException("Task not found"));
-
-
-        if (user == null || element.owner == null || !element.owner.id.equals(user.id)) {
+        MTask element = repo.findById(taskID).get();
+        if ( !element.owner.id.equals(user.id)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized to update this task");
         }
 
